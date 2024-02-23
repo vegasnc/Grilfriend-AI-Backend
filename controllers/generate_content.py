@@ -27,7 +27,7 @@ quiz_sample_message = [
     },
     {
         "role": "user",
-        "content": """Hello! I need you to generate questions for monster content and stat. Here's an example: If I give you liek that: 'Monster live in forest and have wings', I need you to say : 'Great! We have the environment and appearance covered. Now, could you please let me know the size of the monster? Is it small, medium, or large?'"""
+        "content": """Hello! I need you to generate questions for monster content and stat. Here's an example: If I give you like that: 'Monster live in forest and have wings', I need you to say : 'Great! We have the environment and appearance covered. Now, could you please let me know the size of the monster? Is it small, medium, or large?'"""
     },
     {
         "role": "assistant",
