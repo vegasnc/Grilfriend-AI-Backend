@@ -3,6 +3,7 @@ from os import environ
 from urllib.parse import urlparse
 from dotenv import dotenv_values
 from models.monsters import Monsters
+from models.hexagons import Hexagons
 
 import re
 import json
@@ -12,6 +13,7 @@ env_vars = dotenv_values('.env')
 openai.api_key = env_vars["OPENAI_API_KEY"]
 
 monster_model = Monsters()
+hexagon_model = Hexagons()
         
 key_array = ["Environment", "Size", "Appearance", "Attack Mode", "Movement Speed"]
 key_array = [str(item) for item in key_array]
@@ -114,7 +116,7 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to generate monster content and return it to me as homebrewery markdown content. The homebrewery markdown content must start with &&& and end with &&&. Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: '&&&{markdown_sample}&&&'"
+        "content": f"Hello! I need you to generate monster content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: <monster>{markdown_sample}</monster>"
     },
     {
         "role": "assistant",
@@ -130,7 +132,8 @@ def generate_content(message_list, last_content):
 
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo-16k",
-        messages = messages
+        messages = messages,
+
     )
 
     if response and response.choices:
@@ -138,12 +141,11 @@ def generate_content(message_list, last_content):
 
         print(f"=============Assistant reply: {assistant_reply}")
 
-        pattern = r'&&&(.*?)&&&'
+        pattern = r'<monster>(.*?)</monster>'
         result = re.search(pattern, assistant_reply, re.DOTALL)
         if result:
             monster_item = { "content": result.group(1), "prompt": message_list }
-            monster_model.create(monster_item)
-            print(f"----------------------Generated monster content: {result.group(1)}")
+            insert_res = monster_model.create(monster_item)
             return result.group(1)
         else:
             return ""
@@ -165,4 +167,72 @@ def generate_question(message_list):
     else:
         return "Error"
 
-    pass
+def save_updated_content(message_list, updated_content):
+    monster_item = { "content": updated_content, "prompt": message_list }
+    inserted_id = monster_model.create(monster_item)
+
+    if inserted_id:
+        return True
+    return False
+
+def get_hexagon_data():
+    hexagon_data = hexagon_model.find({})
+    return hexagon_data
+#  type= :
+#  Monster:MO
+#  Character:CH
+#  Spell:SP
+#  Background:BG
+#  Item:IT
+#  Location:LO
+#  Equipment:EQ
+
+def create_hexagon_Data():
+    data = [
+        {
+            "color": "#CFC38F",
+            "img_url": "/static/hexagons/monster/D3monSl4yer_a_real_person_playing_DD_transforming_into_the_char_6601780c-38ab-4524-a751-59ad6cb8a2e1.png",
+            "type": "MO",
+        },
+        {
+            "color": "#AC2AB8",
+            "img_url": "/static/hexagons/character/D3monSl4yer_autonomous_TTRPG_gamemaster_131d39e5-0d5b-4e98-8ff9-fcba28b902e5.png",
+            "type": "CH"
+        },
+        {
+            "color": "#442846",
+            "img_url": "",
+            "type": "SP"
+        },
+        {
+            "color": "#D8A539",
+            "img_url": "/static/hexagons/background/D3monSl4yer_a_collage_of_various_DD_characters_representing_man_38a575e6-3241-4396-bb02-2a859b1442a3.png",
+            "type": "BG"
+        },
+        {
+            "color": "#82A2C9",
+            "img_url": "/static/hexagons/item/D3monSl4yer_a_meticulously_designed_dark_steel_sword_with_intri_336c8f14-e342-4d66-93b8-771124ba38f0.png",
+            "type": "IT"
+        },
+        {
+            "color": "#CFC38F",
+            "img_url": "/static/hexagons/location/D3monSl4yer_concept_art_of_Neverwinter_on_the_sword_coast_in_fa_7d4e1e91-03ca-4239-8547-8a72f91990dd.png",
+            "type": "LO"
+        },
+        {
+            "color": "#442846",
+            "img_url": "",
+            "type": "EQ"
+        }
+    ]
+
+    for item in data:
+        res = hexagon_model.create(item)
+
+    return True
+
+def create_hexagon_Datum(data):
+    res = hexagon_model.create(data)
+    return True
+        
+

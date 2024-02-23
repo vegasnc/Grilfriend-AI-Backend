@@ -1,14 +1,22 @@
 from db.database import Database
-
-class Monsters(object):
+class Hexagons(object):
     def __init__(self) -> None:
         self.db = Database()
 
-        self.collection_name = 'monsters' # collection name
+        self.collection_name = 'hexagons' # collection name
 
         self.fields = {
-            "content": "string",
-            "prompt": "array",
+            "color": "string",
+            "img_url": "string",
+            "type":"string", 
+            #  type= :
+            #  Monster:MO
+            #  Character:CH
+            #  Spell:SP
+            #  Background:BG
+            #  Item:IT
+            #  Location:LO
+            #  Equipment:EQ
             "created_at": "datetime",
             "updated_at": "datetime"
         }
