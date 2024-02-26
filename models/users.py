@@ -17,7 +17,7 @@ class Users(object):
 
     def create(self, obj):
         res = self.db.insert(obj, self.collection_name)
-        return "Inserted Id " + res
+        return "Inserted Id " + str(res)
     
     def find(self, obj):  # find all
         return self.db.find(obj, self.collection_name)

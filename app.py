@@ -8,6 +8,7 @@ from controllers.user_controller import UserController
 from controllers.monster_controller import MonsterController
 
 import controllers.generate_content as GenerateContent
+import controllers.generate_spell as GenerateSpell
 
 app = Flask(__name__)
 
@@ -65,6 +66,15 @@ def generate_question():
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateContent.generate_question(message_list)
+    return {
+        "result" : content
+    }, 200
+
+@app.route('/generate_spell', methods=['post'])
+def generate_question():
+    data = request.get_json()
+    message_list = data["message_list"]
+    content = GenerateSpell.generate_spell(message_list)
     return {
         "result" : content
     }, 200

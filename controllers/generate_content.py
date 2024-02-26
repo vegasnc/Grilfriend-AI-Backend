@@ -133,7 +133,6 @@ def generate_content(message_list, last_content):
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo-16k",
         messages = messages,
-
     )
 
     if response and response.choices:
@@ -166,7 +165,7 @@ def generate_question(message_list):
         return assistant_reply
     else:
         return "Error"
-
+    
 def save_updated_content(message_list, updated_content):
     monster_item = { "content": updated_content, "prompt": message_list }
     inserted_id = monster_model.create(monster_item)
