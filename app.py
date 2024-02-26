@@ -71,7 +71,7 @@ def generate_question():
     }, 200
 
 @app.route('/generate_spell', methods=['post'])
-def generate_question():
+def generate_spell():
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateSpell.generate_spell(message_list)
