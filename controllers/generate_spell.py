@@ -10,6 +10,8 @@ import openai
 
 env_vars = dotenv_values('.env')
 openai.api_key = env_vars["OPENAI_API_KEY"]
+COMPLETION_MODEL = env_vars["COMPLETION_MODEL"]
+CHAT_COMPLETION_MODEL = env_vars["CHAT_COMPLETION_MODEL"]
 
 spell_model = Spells()
 
@@ -84,6 +86,9 @@ content_sample_message = [
     }
 ]
 
+start_prompt = "You are a spell content generator. You should create a start prompt for generating spell content of Dungeons & Dragons. Start prompt should be under 10~20 words. Give me a start prompt for generating spell content"
+
+# Generate Spell content from user's chat history
 def generate_spell(message_list, last_content):
     messages = content_sample_message + message_list
 
@@ -91,14 +96,12 @@ def generate_spell(message_list, last_content):
         messages[-1]["content"] += "This is last generated spell content : " + last_content
 
     response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo-16k",
+        model = CHAT_COMPLETION_MODEL,
         messages = messages,
     )
 
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
-
-        print(f"=============Assistant reply: {assistant_reply}")
 
         pattern = r'<spell>(.*?)</spell>'
         result = re.search(pattern, assistant_reply, re.DOTALL)
@@ -111,11 +114,12 @@ def generate_spell(message_list, last_content):
     else:
         return "Error"
 
+# Generate question for getting information to generate spell content
 def generate_question(message_list):
     messages = quiz_sample_message + message_list
 
     response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo-16k",
+        model = CHAT_COMPLETION_MODEL,
         messages = messages
     )
 
@@ -125,3 +129,13 @@ def generate_question(message_list):
         return assistant_reply
     else:
         return "Error"
+    
+# Generate spell start prompt for spell content
+def get_spell_start_prompt():
+    response = openai.Completion.create(model=COMPLETION_MODEL, prompt=start_prompt, max_tokens=20)
+    print(f"{response}")
+    
+    if response and response.choices:
+        assistant_reply = response.choices[0].text
+        return assistant_reply
+    pass

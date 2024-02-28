@@ -11,6 +11,8 @@ import openai
 
 env_vars = dotenv_values('.env')
 openai.api_key = env_vars["OPENAI_API_KEY"]
+COMPLETION_MODEL = env_vars["COMPLETION_MODEL"]
+CHAT_COMPLETION_MODEL = env_vars["CHAT_COMPLETION_MODEL"]
 
 monster_model = Monsters()
 hexagon_model = Hexagons()
@@ -124,6 +126,9 @@ content_sample_message = [
     }
 ]
 
+start_prompt = "You are a monster content generator. You should create a start prompt for generating monster content of Dungeons & Dragons. Start prompt should be under 10~20 words. Give me a start prompt for generating monster content"
+
+# Generate Monster content from user's chat history
 def generate_content(message_list, last_content):
     messages = content_sample_message + message_list
 
@@ -131,14 +136,12 @@ def generate_content(message_list, last_content):
         messages[-1]["content"] += "This is last generated monster content : " + last_content
 
     response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo-16k",
+        model = CHAT_COMPLETION_MODEL,
         messages = messages,
     )
 
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
-
-        print(f"=============Assistant reply: {assistant_reply}")
 
         pattern = r'<monster>(.*?)</monster>'
         result = re.search(pattern, assistant_reply, re.DOTALL)
@@ -151,21 +154,22 @@ def generate_content(message_list, last_content):
     else:
         return "Error"
 
+# Generate question for getting information to generate monster content
 def generate_question(message_list):
     messages = quiz_sample_message + message_list
 
     response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo-16k",
+        model = CHAT_COMPLETION_MODEL,
         messages = messages
     )
 
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
-
         return assistant_reply
     else:
         return "Error"
     
+# Save generated monster content
 def save_updated_content(message_list, updated_content):
     monster_item = { "content": updated_content, "prompt": message_list }
     inserted_id = monster_model.create(monster_item)
@@ -174,10 +178,12 @@ def save_updated_content(message_list, updated_content):
         return True
     return False
 
+# Get generated hexagon items
 def get_hexagon_data():
     hexagon_data = hexagon_model.find({})
     return hexagon_data
 
+# Generate hexagon item from openai
 def create_hexagon_Data():
     data = [
         {
@@ -215,4 +221,13 @@ def create_hexagon_Data():
 
     return True
         
+# Generate monster start prompt for monster content
+def get_monster_start_prompt():
+    response = openai.Completion.create(model=COMPLETION_MODEL, prompt=start_prompt, max_tokens=20)
+    print(f"{response}")
+    
+    if response and response.choices:
+        assistant_reply = response.choices[0].text
+        return assistant_reply
+    return ""
 

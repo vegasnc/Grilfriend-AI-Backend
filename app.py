@@ -89,6 +89,18 @@ def generate_spell_question():
         "result" : content
     }, 200
 
+@app.route('/get/start_prompt', methods=['post'])
+def generate_start_prompt():
+    data = request.get_json()
+    category = data["category"]
+    if category == "monster":
+        content = GenerateMonster.get_monster_start_prompt()
+    elif category == "spell":
+        content = GenerateSpell.get_spell_start_prompt()
+    return {
+        "result" : content
+    }, 200
+
 @app.route('/monster/save_updated_content', methods=['post'])
 def save_updated_content():
     data = request.get_json()
