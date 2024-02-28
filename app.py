@@ -7,7 +7,7 @@ from datetime import datetime
 from controllers.user_controller import UserController
 from controllers.monster_controller import MonsterController
 
-import controllers.generate_content as GenerateContent
+import controllers.generate_monster as GenerateMonster
 import controllers.generate_spell as GenerateSpell
 
 app = Flask(__name__)
@@ -51,54 +51,64 @@ def login_user():
     else:
         return jsonify({"status" : False, "result" : token}), 200
     
-@app.route('/generate_content', methods=['post'])
-def generate_content():
+@app.route('/monster/generate_content', methods=['post'])
+def generate_monster():
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
-    content = GenerateContent.generate_content(message_list, last_content)
+    content = GenerateMonster.generate_content(message_list, last_content)
     return {
         "result" : content
     }, 200
 
-@app.route('/generate_question', methods=['post'])
-def generate_question():
+@app.route('/monster/generate_question', methods=['post'])
+def generate_monster_question():
     data = request.get_json()
     message_list = data["message_list"]
-    content = GenerateContent.generate_question(message_list)
+    content = GenerateMonster.generate_question(message_list)
     return {
         "result" : content
     }, 200
 
-@app.route('/generate_spell', methods=['post'])
+@app.route('/spell/generate_content', methods=['post'])
 def generate_spell():
     data = request.get_json()
     message_list = data["message_list"]
-    content = GenerateSpell.generate_spell(message_list)
+    last_content = data["last_content"]
+    content = GenerateSpell.generate_spell(message_list, last_content)
     return {
         "result" : content
     }, 200
 
-@app.route('/save_updated_content', methods=['post'])
+@app.route('/spell/generate_question', methods=['post'])
+def generate_spell_question():
+    data = request.get_json()
+    message_list = data["message_list"]
+    content = GenerateSpell.generate_question(message_list)
+    return {
+        "result" : content
+    }, 200
+
+@app.route('/monster/save_updated_content', methods=['post'])
 def save_updated_content():
     data = request.get_json()
     message_list = data["message_list"]
     updated_content = data["updated_content"]
-    res = GenerateContent.save_updated_content(message_list, updated_content )
+    res = GenerateMonster.save_updated_content(message_list, updated_content )
     return {
         "result": res
     }, 200
 
 @app.route('/hexagon_data', methods=['post'])
 def get_hexagon_data():
-    res = GenerateContent.get_hexagon_data()
+    res = GenerateMonster.get_hexagon_data()
     return {
         "result": res
     }, 200
 
 @app.route('/create_hexagon', methods=['post'])
 def create_hexagon_data():
-    GenerateContent.create_hexagon_Data()
+    GenerateMonster.create_hexagon_Data()
     return {
         "result": True
     }, 200

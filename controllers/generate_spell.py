@@ -2,8 +2,7 @@ import os
 from os import environ
 from urllib.parse import urlparse
 from dotenv import dotenv_values
-from models.monsters import Monsters
-from models.hexagons import Hexagons
+from models.spells import Spells
 
 import re
 import json
@@ -12,11 +11,21 @@ import openai
 env_vars = dotenv_values('.env')
 openai.api_key = env_vars["OPENAI_API_KEY"]
 
-key_array = ["Level", "Casting Time", "Range/Area", "Components", "Duration", "School", "Attack/Save", "Damage/Effect"]
-key_array = [str(item) for item in key_array]
-key_string = ", ".join(key_array)
+spell_model = Spells()
 
-question_prompt = f"You are a helpful AI assistant that makes the questions for monster content and stat. You can create questions for generating monster content. {key_string}. They are keys that help create the monster's content. If you can know about the key from user's message, you have to ask other keys. And if you know about all keys from user's messages, you don't ask anymore and answer only 'Thanks'."
+question_array = ["What level of spell would you like? (If unspecified, I can default to a certain level.)",
+                 "Can you describe the main effect or purpose of the spell?",
+                 "How quickly would you like the spell to be cast? (e.g., instantaneously, within 1 action, over a period of time)",
+                 "Who or what is the target or affected area of the spell? (e.g., self, creature, area of effect)",
+                 "Are there any specific components required to cast the spell?",
+                 "How long do you want the spell's effects to last?",
+                 "Would you like the spell to deal damage, provide a benefit, or have another effect?",
+                 "Is there a particular theme or school of magic you'd like the spell to belong to?",
+                 "Any additional details or flavor you'd like to add about the spell?"]
+question_array = [str(item) for item in question_array]
+question_string = ", ".join(question_array)
+
+question_prompt = f"You are a helpful AI assistant that makes the questions for spell. You can create questions for generating spell. {question_array}. They are the sample questions that help create the spell. If you can know about the spell information from user's message, you have to ask other question for getting more information. And if you know about all information from user's messages, you don't ask anymore and answer only 'Thanks'."
 quiz_sample_message = [
     {
         "role": "system",
@@ -24,7 +33,7 @@ quiz_sample_message = [
     },
     {
         "role": "user",
-        "content": """Hello! I need you to generate questions for monster content and stat. Here's an example: If I give you like that: 'Monster live in forest and have wings', I need you to say : 'Great! We have the environment and appearance covered. Now, could you please let me know the size of the monster? Is it small, medium, or large?'"""
+        "content": """Hello! I need you to generate questions for spell. Here's an example: If I give you like that: 'Spell name is Blazing Shield.', I need you to say : 'Great! We have the spell name. Now, What level of spell would you like?', Then I will give you like that: 'Level is 2nd', I need you to say: 'Can you describe the main effect or purpose of the spell?' """
     },
     {
         "role": "assistant",
@@ -32,7 +41,87 @@ quiz_sample_message = [
     },
 ]
 
+content_prompt = "You are a spell generator. You can create spell name, level, casting time, range/area, components, duration, school, attack/save, damage/effect and description. You should include the 'Description'  section. If you get additional features, you can update the spell features and description. You have to format the spell content in a homebrewery markdown. If you can't generate the spell content, answer is empty string."
 
-def generate_spell(message_list):
-    
-    pass
+markdown_sample = """
+**Spell Name:** Arcane Distortion
+
+**Level:** 3rd level
+
+**Main Effect/Purpose:** This spell distorts the fabric of arcane energy, disrupting magical effects in the area.
+
+**Casting Time:** 1 action
+
+**Target/Affected Area:** 20-foot radius sphere centered on a point within range
+
+**Components:** Verbal, Somatic
+
+**Duration:** Instantaneous
+
+**School:** Abjuration
+
+**Description:** You unleash a surge of chaotic arcane energy at a point you can see within range. Each creature within a 20-foot radius sphere centered on that point must make an Intelligence saving throw. On a failed save, a creature's concentration on a spell is broken, and any ongoing magical effects within the area are temporarily suppressed for 1d4 rounds.
+
+**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the radius of the area increases by 5 feet for each slot level above 3rd.
+
+**Additional Details/Flavor:** Arcane energy crackles and warps in the affected area, causing disturbances in spells and magical effects. The air feels charged with energy, and spellcasters may experience a momentary disorientation as their magical connections falter.
+
+This spell is particularly useful for disrupting enemy spellcasters' concentration and temporarily neutralizing ongoing magical effects in a given area, making it valuable in both offensive and defensive situations. However, its effectiveness may vary depending on the targets' intelligence and their reliance on magic.
+"""
+
+content_sample_message = [
+    {
+        "role": "system",
+        "content": content_prompt
+    },
+    {
+        "role": "user",
+        "content": f"Hello! I need you to generate spell content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'Level is 3', I need you to say like that: <spell>{markdown_sample}</spell>"
+    },
+    {
+        "role": "assistant",
+        "content": "Sure thing!"
+    }
+]
+
+def generate_spell(message_list, last_content):
+    messages = content_sample_message + message_list
+
+    if last_content != "":
+        messages[-1]["content"] += "This is last generated spell content : " + last_content
+
+    response = openai.ChatCompletion.create(
+        model = "gpt-3.5-turbo-16k",
+        messages = messages,
+    )
+
+    if response and response.choices:
+        assistant_reply = response.choices[0].message["content"]
+
+        print(f"=============Assistant reply: {assistant_reply}")
+
+        pattern = r'<spell>(.*?)</spell>'
+        result = re.search(pattern, assistant_reply, re.DOTALL)
+        if result:
+            spell_item = { "content": result.group(1), "prompt": message_list }
+            insert_res = spell_model.create(spell_item)
+            return result.group(1)
+        else:
+            return ""
+    else:
+        return "Error"
+
+def generate_question(message_list):
+    messages = quiz_sample_message + message_list
+
+    response = openai.ChatCompletion.create(
+        model = "gpt-3.5-turbo-16k",
+        messages = messages
+    )
+
+    if response and response.choices:
+        assistant_reply = response.choices[0].message["content"]
+
+        return assistant_reply
+    else:
+        return "Error"
