@@ -126,7 +126,7 @@ content_sample_message = [
     }
 ]
 
-start_prompt = "You are a monster content generator. You should create a start prompt for generating monster content of Dungeons & Dragons. Start prompt should be under 10~20 words. Give me a start prompt for generating monster content"
+start_prompt = "You are a monster content generator. You should create a start prompt for generating monster content of Dungeons & Dragons. Start prompt should be under 10~20 words. Don't specify the monster's features like monster name and so on. Give me a start prompt for generating monster content"
 
 # Generate Monster content from user's chat history
 def generate_content(message_list, last_content):
@@ -224,7 +224,6 @@ def create_hexagon_Data():
 # Generate monster start prompt for monster content
 def get_monster_start_prompt():
     response = openai.Completion.create(model=COMPLETION_MODEL, prompt=start_prompt, max_tokens=20)
-    print(f"{response}")
     
     if response and response.choices:
         assistant_reply = response.choices[0].text
