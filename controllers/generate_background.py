@@ -40,7 +40,7 @@ question_array = [
 question_array = [str(item) for item in question_array]
 question_string = ", ".join(question_array)
 
-question_prompt = f"You are a helpful AI assistant that makes the questions for backstory of character. You can create questions for generating backstory of character. {question_array}. They are the question templates that help create the backstory. Question templates are just template. So you can change those questions or use this question as it is. If you can know about the character information from user's message, you have to ask other question for getting more information. And if you have about all information from user's messages, or asked all questions from template, you don't ask anymore and answer only 'Thanks'."
+question_prompt = f"You are a helpful AI assistant that makes the questions for backstory of character. You can create questions for generating backstory of character. {question_array}. That are the sample questions that help create the backstory. Sample question are just sample. So you can change those questions or use this question as it is. But you should ask a question one by one. If you can know about the character information from user's message, you have to ask other question for getting more information. And if you have about all information from user's messages, or asked all questions from template, you don't ask anymore and answer only 'Thanks'."
 quiz_sample_message = [
     {
         "role": "system",
