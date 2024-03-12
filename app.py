@@ -9,6 +9,7 @@ from controllers.monster_controller import MonsterController
 
 import controllers.generate_monster as GenerateMonster
 import controllers.generate_spell as GenerateSpell
+import controllers.generate_background as GenerateBackground
 
 app = Flask(__name__)
 
@@ -89,14 +90,37 @@ def generate_spell_question():
         "result" : content
     }, 200
 
+@app.route('/background/generate_content', methods=['post'])
+def generate_background():
+    data = request.get_json()
+    message_list = data["message_list"]
+    last_content = data["last_content"]
+    content = GenerateBackground.generate_background(message_list, last_content)
+    return {
+        "result" : content
+    }, 200
+
+@app.route('/background/generate_question', methods=['post'])
+def generate_background_question():
+    data = request.get_json()
+    message_list = data["message_list"]
+    content = GenerateBackground.generate_question(message_list)
+    return {
+        "result" : content
+    }, 200
+
 @app.route('/get/start_prompt', methods=['post'])
 def generate_start_prompt():
     data = request.get_json()
+
     category = data["category"]
     if category == "monster":
         content = GenerateMonster.get_monster_start_prompt()
     elif category == "spell":
         content = GenerateSpell.get_spell_start_prompt()
+    elif category == "background":
+        content = GenerateBackground.get_background_start_prompt()
+
     return {
         "result" : content
     }, 200
