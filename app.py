@@ -10,6 +10,7 @@ from controllers.monster_controller import MonsterController
 import controllers.generate_monster as GenerateMonster
 import controllers.generate_spell as GenerateSpell
 import controllers.generate_background as GenerateBackground
+import controllers.generate_magic_item as GenerateMagicItem
 
 app = Flask(__name__)
 
@@ -109,6 +110,25 @@ def generate_background_question():
         "result" : content
     }, 200
 
+@app.route('/magic_item/generate_content', methods=['post'])
+def generate_magic_item():
+    data = request.get_json()
+    message_list = data["message_list"]
+    last_content = data["last_content"]
+    content = GenerateMagicItem.generate_magic_item(message_list, last_content)
+    return {
+        "result" : content
+    }, 200
+
+@app.route('/magic_item/generate_question', methods=['post'])
+def generate_magic_item_question():
+    data = request.get_json()
+    message_list = data["message_list"]
+    content = GenerateMagicItem.generate_question(message_list)
+    return {
+        "result" : content
+    }, 200
+
 @app.route('/get/start_prompt', methods=['post'])
 def generate_start_prompt():
     data = request.get_json()
@@ -120,6 +140,8 @@ def generate_start_prompt():
         content = GenerateSpell.get_spell_start_prompt()
     elif category == "background":
         content = GenerateBackground.get_background_start_prompt()
+    elif category == "magic_item":
+        content = GenerateMagicItem.get_magic_item_start_prompt()
 
     return {
         "result" : content
