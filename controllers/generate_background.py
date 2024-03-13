@@ -79,7 +79,7 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to generate character's backstory content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'I wanna make attractive and fun backstory', I need you to say like that: <background>{markdown_sample}</background>"
+        "content": f"Hello! I need you to generate character's backstory content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'Explore new lands, discover hidden treasures, and become a legendary adventurer', I need you to say like that: <background>{markdown_sample}</background>"
     },
     {
         "role": "assistant",
