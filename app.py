@@ -11,6 +11,7 @@ import controllers.generate_monster as GenerateMonster
 import controllers.generate_spell as GenerateSpell
 import controllers.generate_background as GenerateBackground
 import controllers.generate_magic_item as GenerateMagicItem
+import controllers.generate_npc as GenerateNPC
 
 app = Flask(__name__)
 
@@ -129,6 +130,25 @@ def generate_magic_item_question():
         "result" : content
     }, 200
 
+@app.route('/npc/generate_content', methods=['post'])
+def generate_npc():
+    data = request.get_json()
+    message_list = data["message_list"]
+    last_content = data["last_content"]
+    content = GenerateNPC.generate_content(message_list, last_content)
+    return {
+        "result" : content
+    }, 200
+
+@app.route('/npc/generate_question', methods=['post'])
+def generate_npc_question():
+    data = request.get_json()
+    message_list = data["message_list"]
+    content = GenerateNPC.generate_question(message_list)
+    return {
+        "result" : content
+    }, 200
+
 @app.route('/get/start_prompt', methods=['post'])
 def generate_start_prompt():
     data = request.get_json()
@@ -142,6 +162,8 @@ def generate_start_prompt():
         content = GenerateBackground.get_background_start_prompt()
     elif category == "magic_item":
         content = GenerateMagicItem.get_magic_item_start_prompt()
+    elif category == "npc":
+        content = GenerateNPC.get_npc_start_prompt()
 
     return {
         "result" : content
