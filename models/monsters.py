@@ -9,6 +9,7 @@ class Monsters(object):
         self.fields = {
             "content": "string",
             "prompt": "array",
+            "dalle_prompt": "string",
             "created_at": "datetime",
             "updated_at": "datetime"
         }

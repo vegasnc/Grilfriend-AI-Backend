@@ -59,9 +59,10 @@ def generate_monster():
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
-    content = GenerateMonster.generate_content(message_list, last_content)
+    monster_content, dalle_prompt  = GenerateMonster.generate_content(message_list, last_content)
     return {
-        "result" : content
+        "monster_content" : monster_content,
+        "dalle_prompt" : dalle_prompt
     }, 200
 
 @app.route('/monster/generate_question', methods=['post'])

@@ -37,7 +37,7 @@ quiz_sample_message = [
     },
 ]
 
-content_prompt = "You are a monster content generator. You can create descriptions and stat blocks. When you create a description, you have to include the stat and ability block. Also you should include the 'Action' section. But 'Legendary Actions' section is optional. For the ability part, you can use short words like 'Str', 'Dex' for 'Strength', 'Dexterity' and so on. If you get additional features, you can update the monster content. If the user wants a new monster, all items, starting with the monster name, must be updated to a completely different words. If the inputed prompt is same as before, you have to generate completely different words from name to content. That is not updating monster case, don't use the repeated word. You need to create monster names that are attractive, scary, and human. Don't make general monster name style, like 'Forest Stalker', 'Sylvan Stalker' and so on. You have to format the monster content in a homebrewery markdown. If you can't generate the monster content, answer is empty string. But if you can get one or more monster information, you should generate the monster, even if it is not specific information."
+content_prompt = "You are a monster content generator. You can create descriptions and stat blocks. When you create a description, you must include the stat and ability block and challenge rating. Also you should include the 'Action' section, but 'Action' section is not 'Legendary Actions' section. Only create a 'Legendary Actions' section if user wants. So for the legendary action is created only when user wants to. For the ability part, you can use short words like 'Str', 'Dex' for 'Strength', 'Dexterity' and so on. If you get additional features, you can update the monster content. If the user wants a new monster, all items, starting with the monster name, must be updated to a completely different words. If the inputed prompt is same as before, you have to generate completely different words from name to content. That is not updating monster case, don't use the repeated word. You need to create monster names that are attractive, scary, and human. Don't make general monster name style, like 'Forest Stalker', 'Sylvan Stalker' and so on. You have to format the monster content in a homebrewery markdown. You should generate the monster content everytime. Even if the monster information is not enough, you should generate the monster content as user's intention. Also, if you generated the monster content, you should generate the prompt for DALLE3 for the generated monster."
 
 markdown_sample = """
 ## Forest Guardian
@@ -98,18 +98,9 @@ markdown_sample = """
 
 ***Thorny Vine Whip.*** *Melee Weapon Attack:* +9 to hit, reach 15 ft., one target. *Hit:* 14 (2d8 + 5) slashing damage plus 7 (2d6) poison damage, and the target must succeed on a DC 16 Constitution saving throw or become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.
 
----
-
-### Legendary Actions
-
-The forest guardian can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The forest guardian regains spent legendary actions at the start of its turn.
-
-***Wooden Club.*** The forest guardian makes a wooden club attack.
-
-***Entwining Roots (Costs 2 Actions).*** The forest guardian magically causes grass and vines to grow rapidly from the ground in a 20-foot radius centered on itself. The area becomes difficult terrain, and any creature that starts its turn in the area must succeed on a DC 16 Strength saving throw or have its speed reduced to 0 until the start of its next turn.
-
-***Healing Surge (Costs 3 Actions).*** The forest guardian regains 30 hit points.
 """
+
+dalle3_prompt = """Create an eerie depiction of a Darkwood Stalker emerging from the deplths of a dense, ancient forest, its form blending seamlessly with the shadows and twisted foliage around it. Capture the sense of malevelence and stealth as it perpares to unleash its claws and shadowy powers upon unsuspecting adventurers."""
 
 content_sample_message = [
     {
@@ -118,7 +109,7 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to generate monster content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: <monster>{markdown_sample}</monster>"
+        "content": f"Hello! I need you to generate monster content and return it to me as homebrewery markdown content. Also I need prompt for DALLE3 for generated monster. Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: <monster>{markdown_sample}</monster><dalle>{dalle3_prompt}</dalle>"
     },
     {
         "role": "assistant",
@@ -143,16 +134,23 @@ def generate_content(message_list, last_content):
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
 
-        pattern = r'<monster>(.*?)</monster>'
-        result = re.search(pattern, assistant_reply, re.DOTALL)
+        monster_pattern = r'<monster>(.*?)</monster>'
+        dalle_pattern = r'<dalle>(.*?)</dalle>'
+        result = re.search(monster_pattern, assistant_reply, re.DOTALL)
         if result:
-            monster_item = { "content": result.group(1), "prompt": message_list }
+            # Get dalle3 prompt for generated monster content
+            prompt = ""
+            dalle_result = re.search(dalle_pattern, assistant_reply, re.DOTALL)
+            if dalle_result:
+                prompt = dalle_result.group(1)
+
+            monster_item = { "content": result.group(1), "prompt": message_list, "dalle_prompt": prompt }
             insert_res = monster_model.create(monster_item)
-            return result.group(1)
+            return result.group(1), prompt
         else:
-            return ""
+            return "", ""
     else:
-        return "Error"
+        return "Error", ""
 
 # Generate question for getting information to generate monster content
 def generate_question(message_list):
