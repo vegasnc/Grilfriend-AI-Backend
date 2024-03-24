@@ -61,19 +61,22 @@ def get_voice_message(message):
 
 # Build web GUI
 from flask import Flask, render_template, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, methods=[ 'POST', 'GET' ], allow_headers=[ 'Content-Type' ])
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route('/send_message', methods=['POST'])
+@app.route('/get_answer', methods=['POST'])
 def send_message():
-    human_input=request.form['human_input']
-    message = get_response_from_ai(human_input)
+    data = request.get_json()
+    question = data["question"]
+    message = get_response_from_ai(question)
+
+    print(message)
     # get_voice_message(message)
-    return message
+    return {
+        "answer": message
+    }, 200
 
 if __name__ == "__main__":
-    app.run(host="192.168.107.45")
+    app.run(debug=False)
