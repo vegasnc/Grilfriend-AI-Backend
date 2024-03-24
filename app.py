@@ -6,6 +6,12 @@ import generate_answer
 app = Flask(__name__)
 CORS(app, methods=[ 'POST', 'GET' ], allow_headers=[ 'Content-Type' ])
 
+@app.route('/', methods=['GET'])
+def index():
+    return {
+        "answer": "success"
+    }, 200
+
 @app.route('/get_answer', methods=['POST'])
 def get_answer():
     data = request.get_json()
