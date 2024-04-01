@@ -4,8 +4,6 @@ from langchain.chains import LLMChain, RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferWindowMemory
 from dotenv import find_dotenv, load_dotenv
-from elevenlabs.client import ElevenLabs
-from elevenlabs import play, save
 import os
 
 load_dotenv(find_dotenv())
