@@ -19,7 +19,6 @@ def get_answer():
     message = generate_answer.get_response_from_ai(question)
 
     print(message)
-    # get_voice_message(message)
     return {
         "answer": message
     }, 200
