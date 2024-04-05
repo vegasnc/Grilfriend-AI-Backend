@@ -37,20 +37,18 @@ quiz_sample_message = [
     },
 ]
 
-content_prompt = "You are a monster content generator. You can create descriptions and stat blocks. When you create a description, you must include the stat and ability block and challenge rating. Also you should include the 'Action' section, but 'Action' section is not 'Legendary Actions' section. Only create a 'Legendary Actions' section if user wants. So for the legendary action is created only when user wants to. For the ability part, you can use short words like 'Str', 'Dex' for 'Strength', 'Dexterity' and so on. If you get additional features, you can update the monster content. If the user wants a new monster, all items, starting with the monster name, must be updated to a completely different words. If the inputed prompt is same as before, you have to generate completely different words from name to content. That is not updating monster case, don't use the repeated word. You need to create monster names that are attractive, scary, and human. Don't make general monster name style, like 'Forest Stalker', 'Sylvan Stalker' and so on. You have to format the monster content in a homebrewery markdown. You should generate the monster content everytime. Even if the monster information is not enough, you should generate the monster content as user's intention. Also, if you generated the monster content, you should generate the prompt for DALLE3 for the generated monster."
-
 markdown_sample = """
-## Forest Guardian
+## Abyssal Wing
 
-*Large fey, neutral*
+*Large fiend, chaotic evil*
 
 ---
 
 ###
 
-- **Armor Class** 17 (natural armor)
-- **Hit Points** 136 (13d10 + 65)
-- **Speed** 40 ft.
+- **Armor Class** 18 (natural armor)
+- **Hit Points** 189 (18d10 + 90)
+- **Speed** 40 ft., fly 60 ft., swim 40 ft.
 
 ---
 
@@ -58,49 +56,136 @@ markdown_sample = """
 
 |STR|DEX|CON|INT|WIS|CHA|
 |-|-|-|-|-|-|
-|20 (+5)|16 (+3)|20 (+5)|14 (+2)|18 (+4)|16 (+3)|
+|21 (+5)|16 (+3)|20 (+5)|14 (+2)|15 (+2)|18 (+4)|
 
 ---
 
 ###
 
-- **Skills** Perception +8, Stealth +6
-- **Damage Resistances** bludgeoning, piercing, and slashing damage from nonmagical attacks
+- **Skills** Perception +6, Stealth +8
+- **Damage Resistances** cold, fire, lightning; bludgeoning, piercing, and slashing from nonmagical attacks
 - **Damage Immunities** poison
 - **Condition Immunities** poisoned
-- **Senses** darkvision 60 ft., passive Perception 18
-- **Languages** Sylvan, Elvish
-- **Challenge** 9 (5,000 XP)
+- **Senses** darkvision 120 ft., passive Perception 16
+- **Languages** Abyssal, Aquan
+- **Challenge** 14 (11,500 XP)
 
 ---
 
 ###
 
-***Innate Spellcasting.*** The forest guardian's innate spellcasting ability is Wisdom (spell save DC 16). It can innately cast the following spells, requiring no material components:
+***Amphibious.*** The abyssal wing can breathe air and water.
 
-- At will: *druidcraft, entangle, pass without trace*
-- 3/day each: *call lightning, barkskin*
-- 1/day: *plant growth*
+***Innate Spellcasting.*** The abyssal wing's innate spellcasting ability is Charisma (spell save DC 16). It can innately cast the following spells, requiring no material components:
 
-***Tree Stride.*** Once on its turn, the forest guardian can use 10 feet of its movement to step magically into one living tree within its reach and emerge from a second living tree within 60 feet of the first tree, appearing in an unoccupied space within 5 feet of the second tree. Both trees must be Large or bigger.
+- At will: *darkness, fog cloud*
+- 3/day each: *invisibility, water breathing*
+- 1/day each: *control water, teleport*
 
-***Regeneration.*** The forest guardian regains 10 hit points at the start of its turn if it has at least 1 hit point.
+***Echolocation.*** The abyssal wing can't be blinded or deafened, and it has blindsight with a radius of 60 feet.
 
-***Spellbreaker.*** The forest guardian has advantage on saving throws against spells and other magical effects.
+***Shadow Step.*** The abyssal wing can magically teleport up to 120 feet to an unoccupied space it can see that is also in darkness.
+
+***Regeneration.*** The abyssal wing regains 10 hit points at the start of its turn if it has at least 1 hit point.
 
 ---
 
 ### Actions
 
-***Multiattack.*** The forest guardian makes two attacks: one with its *wooden club* and one with its *thorny vine whip*.
+***Multiattack.*** The abyssal wing makes three attacks: one with its *bite* and two with its *claws*.
 
-***Wooden Club.*** *Melee Weapon Attack:* +9 to hit, reach 10 ft., one target. *Hit:* 14 (2d8 + 5) bludgeoning damage.
+***Bite.*** *Melee Weapon Attack:* +9 to hit, reach 10 ft., one target. *Hit:* 16 (2d10 + 5) piercing damage plus 7 (2d6) poison damage.
 
-***Thorny Vine Whip.*** *Melee Weapon Attack:* +9 to hit, reach 15 ft., one target. *Hit:* 14 (2d8 + 5) slashing damage plus 7 (2d6) poison damage, and the target must succeed on a DC 16 Constitution saving throw or become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.
+***Claw.*** *Melee Weapon Attack:* +9 to hit, reach 5 ft., one target. *Hit:* 14 (2d8 + 5) slashing damage.
 
+---
+
+### Legendary Actions
+
+The abyssal wing can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The abyssal wing regains spent legendary actions at the start of its turn.
+
+- **Move.** The abyssal wing moves up to half its flying or swimming speed.
+- **Make a Bite Attack.** The abyssal wing makes a bite attack.
+- **Make a Dark Mist (Costs 2 Actions).** The abyssal wing releases a cloud of dark mist in a 20-foot radius centered on itself. The mist spreads around corners, and its area is heavily obscured. Each creature that starts its turn in the mist must make a DC 16 Wisdom saving throw or be frightened until the end of its next turn.
 """
 
-dalle3_prompt = """Create an eerie depiction of a Darkwood Stalker emerging from the deplths of a dense, ancient forest, its form blending seamlessly with the shadows and twisted foliage around it. Capture the sense of malevelence and stealth as it perpares to unleash its claws and shadowy powers upon unsuspecting adventurers."""
+updated_markdown_sample = """
+## Abyssal Wing (Small)
+
+*Small fiend, chaotic evil*
+
+---
+
+### 
+
+- **Armor Class** 18 (natural armor)
+- **Hit Points** 189 (18d10 + 90)
+- **Speed** 30 ft., fly 40 ft., swim 30 ft.
+
+---
+
+### 
+
+|STR|DEX|CON|INT|WIS|CHA|
+|-|-|-|-|-|-|
+|11 (+0)|16 (+3)|20 (+5)|14 (+2)|15 (+2)|18 (+4)|
+
+---
+
+### 
+
+- **Skills** Perception +6, Stealth +5
+- **Damage Resistances** cold, fire, lightning; bludgeoning, piercing, and slashing from nonmagical attacks
+- **Damage Immunities** poison
+- **Condition Immunities** poisoned
+- **Senses** darkvision 120 ft., passive Perception 16
+- **Languages** Abyssal, Aquan
+- **Challenge** 14 (11,500 XP)
+
+---
+
+### 
+
+***Amphibious.*** The abyssal wing can breathe air and water.
+
+***Innate Spellcasting.*** The abyssal wing's innate spellcasting ability is Charisma (spell save DC 16). It can innately cast the following spells, requiring no material components:
+
+- At will: *darkness, fog cloud*
+- 3/day each: *invisibility, water breathing*
+- 1/day each: *control water, teleport*
+
+***Echolocation.*** The abyssal wing can't be blinded or deafened, and it has blindsight with a radius of 60 feet.
+
+***Shadow Step.*** The abyssal wing can magically teleport up to 60 feet to an unoccupied space it can see that is also in darkness.
+
+***Regeneration.*** The abyssal wing regains 10 hit points at the start of its turn if it has at least 1 hit point.
+
+---
+
+### Actions
+
+***Multiattack.*** The abyssal wing makes three attacks: one with its *bite* and two with its *claws*.
+
+***Bite.*** *Melee Weapon Attack:* +5 to hit, reach 5 ft., one target. *Hit:* 7 (1d10 + 2) piercing damage plus 3 (1d6) poison damage.
+
+***Claw.*** *Melee Weapon Attack:* +5 to hit, reach 5 ft., one target. *Hit:* 6 (1d6 + 3) slashing damage.
+
+---
+
+### Legendary Actions
+
+The abyssal wing can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The abyssal wing regains spent legendary actions at the start of its turn.
+
+- **Move.** The abyssal wing moves up to half its flying or swimming speed.
+- **Make a Bite Attack.** The abyssal wing makes a bite attack.
+- **Make a Dark Mist (Costs 2 Actions).** The abyssal wing releases a cloud of dark mist in a 10-foot radius centered on itself. The mist spreads around corners, and its area is heavily obscured. Each creature that starts its turn in the mist must make a DC 16 Wisdom saving throw or be frightened until the end of its next turn.
+"""
+
+dalle3_prompt = """Create an eerie depiction of a Abyssal Wing emerging from the deplths of a dense, ancient forest, its form blending seamlessly with the shadows and twisted foliage around it. Capture the sense of malevelence and stealth as it perpares to unleash its claws and shadowy powers upon unsuspecting adventurers."""
+
+content_prompt = "You are a monster content generator. You can create descriptions and stat blocks. When you create a description, you must include the stat and ability block and challenge rating. Also you should include the 'Action' section, but 'Action' section is not 'Legendary Actions' section. Only create a 'Legendary Actions' section if user wants. So for the legendary action is created only when user wants to. For the ability part, you can use short words like 'Str', 'Dex' for 'Strength', 'Dexterity' and so on. Lastly, only some parts should be updated based on the generated monster content, and the remaining elements, including the monster name, should not be updated unless the user wishes. In this case, don't make a new monster. For example, if the user doesn't want a new monster name, don't update the monster name. Just update some things that user wants. If the user wants a new monster, all items, starting with the monster name, must be updated to a completely different words. If the inputed prompt is same as before, you have to generate completely different words from name to content. That is not updating monster case, don't use the repeated word in one monster contents. You need to create monster names that are attractive, scary, and human. Don't make general monster name style, like 'Forest Stalker', 'Sylvan Stalker' and so on. You have to format the monster content in a homebrewery markdown. Even if the monster information is not enough, you should generate the monster content as user's intention. Also, if you generated the monster content, you should generate the prompt for DALLE3 for the generated monster.When you generate the monster content, you must set the generated monster content between <monster> and </monster>. And for the DALLE3 prompt, you must set the generated DALLE3 prompt between <dalle> and </dalle>.  Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: '<monster> {markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Continue, If I give you like that : 'red eye and too small.', I need you to say like that: '<monster> {updated_markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Like this example, you should re-generate only related parts from last content."
+
+
 
 content_sample_message = [
     {
@@ -109,7 +194,9 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to generate monster content and return it to me as homebrewery markdown content. Also I need prompt for DALLE3 for generated monster. Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: <monster>{markdown_sample}</monster><dalle>{dalle3_prompt}</dalle>"
+        "content": """
+            Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: '<monster> {markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Continue, If I give you like that : 'red eye and too small.', I need you to say like that: '<monster> {updated_markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Like this example, you should re-generate only related parts from last content.
+        """
     },
     {
         "role": "assistant",
@@ -124,7 +211,7 @@ def generate_content(message_list, last_content):
     messages = content_sample_message + message_list
 
     if last_content != "":
-        messages[-1]["content"] += "This is last generated monster content : " + last_content
+        messages[-1]["content"] += "\n This is last generated monster content : " + last_content
 
     response = openai.ChatCompletion.create(
         model = CHAT_COMPLETION_MODEL,
@@ -133,6 +220,8 @@ def generate_content(message_list, last_content):
 
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
+
+        print(f"{assistant_reply}")
 
         monster_pattern = r'<monster>(.*?)</monster>'
         dalle_pattern = r'<dalle>(.*?)</dalle>'
