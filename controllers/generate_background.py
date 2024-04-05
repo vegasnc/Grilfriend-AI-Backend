@@ -94,7 +94,7 @@ def generate_background(message_list, last_content):
     messages = content_sample_message + message_list
 
     if last_content != "":
-        messages[-1]["content"] += "This is last generated background content : " + last_content
+        messages[-1]["content"] = last_content
 
     response = openai.ChatCompletion.create(
         model = CHAT_COMPLETION_MODEL,
