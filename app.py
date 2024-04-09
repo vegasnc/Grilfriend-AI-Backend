@@ -6,6 +6,8 @@ from bson import ObjectId
 from datetime import datetime
 from controllers.user_controller import UserController
 from controllers.monster_controller import MonsterController
+from dotenv import dotenv_values
+from posthog import Posthog
 
 import controllers.generate_monster as GenerateMonster
 import controllers.generate_spell as GenerateSpell
@@ -13,9 +15,17 @@ import controllers.generate_background as GenerateBackground
 import controllers.generate_magic_item as GenerateMagicItem
 import controllers.generate_npc as GenerateNPC
 
+
 app = Flask(__name__)
 
 CORS(app, methods=['GET', 'POST'], allow_headers=['Content-Type'])
+
+env_vars = dotenv_values('.env')
+POSTHOG_KEY = env_vars["POSTHOG_KEY"]
+POSTHOG_HOST = env_vars["POSTHOG_HOST"]
+# Initialize PostHog
+posthog = Posthog(POSTHOG_KEY, host=POSTHOG_HOST)
+posthog.debug = True
 
 userController = UserController()
 monsterController = MonsterController()
@@ -33,6 +43,10 @@ def get_request():
 
 @app.route('/signup', methods=['post'])
 def signup_user():
+    posthog.capture(
+        "backend_user_sign_up", 
+        "user_signed_up"
+    )
     # Access the request data
     data = request.get_json()
     
@@ -47,6 +61,11 @@ def signup_user():
 def login_user():
     data = request.get_json()
 
+    posthog.capture(
+        "backend_user_sign_in", 
+        "user_signed_in"
+    )
+
     token, res = userController.login(data)
     
     if res:
@@ -56,6 +75,10 @@ def login_user():
     
 @app.route('/monster/generate_content', methods=['post'])
 def generate_monster():
+    posthog.capture(
+        "backend_generate_monster_content", 
+        "generate_monster_content"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
@@ -67,6 +90,10 @@ def generate_monster():
 
 @app.route('/monster/generate_question', methods=['post'])
 def generate_monster_question():
+    posthog.capture(
+        "backend_generate_monster_question", 
+        "generate_monster_question"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateMonster.generate_question(message_list)
@@ -76,6 +103,10 @@ def generate_monster_question():
 
 @app.route('/spell/generate_content', methods=['post'])
 def generate_spell():
+    posthog.capture(
+        "backend_generate_spell_content", 
+        "generate_spell_content"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
@@ -86,6 +117,10 @@ def generate_spell():
 
 @app.route('/spell/generate_question', methods=['post'])
 def generate_spell_question():
+    posthog.capture(
+        "backend_generate_spell_question", 
+        "generate_spell_question"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateSpell.generate_question(message_list)
@@ -95,6 +130,10 @@ def generate_spell_question():
 
 @app.route('/background/generate_content', methods=['post'])
 def generate_background():
+    posthog.capture(
+        "backend_generate_background_content", 
+        "generate_background_content"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
@@ -105,6 +144,10 @@ def generate_background():
 
 @app.route('/background/generate_question', methods=['post'])
 def generate_background_question():
+    posthog.capture(
+        "backend_generate_background_question", 
+        "generate_background_question"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateBackground.generate_question(message_list)
@@ -114,6 +157,10 @@ def generate_background_question():
 
 @app.route('/magic_item/generate_content', methods=['post'])
 def generate_magic_item():
+    posthog.capture(
+        "backend_generate_magic_item_content", 
+        "generate_magic_item_content"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
@@ -124,6 +171,10 @@ def generate_magic_item():
 
 @app.route('/magic_item/generate_question', methods=['post'])
 def generate_magic_item_question():
+    posthog.capture(
+        "backend_generate_magic_item_question", 
+        "generate_magic_item_question"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateMagicItem.generate_question(message_list)
@@ -133,6 +184,10 @@ def generate_magic_item_question():
 
 @app.route('/npc/generate_content', methods=['post'])
 def generate_npc():
+    posthog.capture(
+        "backend_generate_npc_content", 
+        "generate_npc_content"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     last_content = data["last_content"]
@@ -143,6 +198,10 @@ def generate_npc():
 
 @app.route('/npc/generate_question', methods=['post'])
 def generate_npc_question():
+    posthog.capture(
+        "backend_generate_npc_question", 
+        "generate_npc_question"
+    )
     data = request.get_json()
     message_list = data["message_list"]
     content = GenerateNPC.generate_question(message_list)
@@ -152,6 +211,10 @@ def generate_npc_question():
 
 @app.route('/get/start_prompt', methods=['post'])
 def generate_start_prompt():
+    posthog.capture(
+        "backend_generate_start_prompt", 
+        "generate_start_prompt"
+    )
     data = request.get_json()
 
     category = data["category"]
