@@ -1,4 +1,5 @@
 import json
+import sentry_sdk
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -8,12 +9,28 @@ from controllers.user_controller import UserController
 from controllers.monster_controller import MonsterController
 from dotenv import dotenv_values
 from posthog import Posthog
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk import capture_exception
 
 import controllers.generate_monster as GenerateMonster
 import controllers.generate_spell as GenerateSpell
 import controllers.generate_background as GenerateBackground
 import controllers.generate_magic_item as GenerateMagicItem
 import controllers.generate_npc as GenerateNPC
+
+# 53ec5c968a9bda7d2b9eebcaf9ca7ece7eea748994e8c7880215273e00730eb5
+
+sentry_sdk.init(
+    dsn="https://88fd499b3cf051dcf0911a9a275d4b7f@o4507061378809856.ingest.us.sentry.io/4507061532295168",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+    integrations=[FlaskIntegration()]
+)
 
 
 app = Flask(__name__)
@@ -263,6 +280,11 @@ def get_monster_data():
     return {
         "result": res
     }, 200
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    capture_exception(e)
+    print(f"Error captured : {e}")
 
 if __name__ == '__main__':
     print("Server is running on port 5000")
