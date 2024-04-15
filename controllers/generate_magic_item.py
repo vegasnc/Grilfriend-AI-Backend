@@ -43,17 +43,6 @@ quiz_sample_message = [
     },
 ]
 
-content_prompt = """You are a D&D game magic item generator. Those are 7 tips for creating custom magic items.
-1. Take inspiration from existing magic items.
-2. Tailor items specifically for characters.
-3. Make items that are part of the world's lore.
-4. Help characters with their weaknesses.
-5. Empower Your Characters' Strengths.
-6. Make Items That Get More Powerful As Characters Level Up.
-7. Add Risk And Reward By Creating Cursed Items
-You should reference those tips for generating new magic items.
-If you get additional features, you can update the generated magic item. You have to format the magic item content in a homebrewery markdown. If you can't generate the magic item content, answer is empty string."""
-
 markdown_sample = """
 **Name: Celestial Starburst Amulet**
 
@@ -71,6 +60,17 @@ The amulet also serves as a stylish accessory when not in use for its magical pr
 
 **Item Tags: PROTECTION, GUIDANCE**
 """
+
+content_prompt = f"""You are a D&D game magic item generator. Those are 7 tips for creating custom magic items.
+1. Take inspiration from existing magic items.
+2. Tailor items specifically for characters.
+3. Make items that are part of the world's lore.
+4. Help characters with their weaknesses.
+5. Empower Your Characters' Strengths.
+6. Make Items That Get More Powerful As Characters Level Up.
+7. Add Risk And Reward By Creating Cursed Items
+You should reference those tips for generating new magic items.
+If you get additional features, you can update the generated magic item. You have to format the magic item content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. Your generated content must be enclosed between <magicitem> and </magicitem>. For example: If the user provides like that: 'The item is a silver crescent pendant with sapphire gems and a starburst engraving, looking mystical and celestial', your response should be like that: '<magicitem>{markdown_sample}</magicitem>'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests, ensuring <magicitem> tag are included in the generated response."""
 
 content_sample_message = [
     {

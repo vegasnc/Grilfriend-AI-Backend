@@ -43,8 +43,6 @@ quiz_sample_message = [
     },
 ]
 
-content_prompt = "You are a spell generator. You can create spell name, level, casting time, range/area, components, duration, school, attack/save, damage/effect and description. You should include the 'Description'  section. If you get additional features, you can update the spell features and description. You have to format the spell content in a homebrewery markdown. If you can't generate the spell content, answer is empty string."
-
 markdown_sample = """
 **Spell Name:** Arcane Distortion
 
@@ -70,6 +68,8 @@ markdown_sample = """
 
 This spell is particularly useful for disrupting enemy spellcasters' concentration and temporarily neutralizing ongoing magical effects in a given area, making it valuable in both offensive and defensive situations. However, its effectiveness may vary depending on the targets' intelligence and their reliance on magic.
 """
+
+content_prompt = f"You are a D&D game spell generator. You can create spell name, level, casting time, range/area, components, duration, school, attack/save, damage/effect and description. You should include the 'Description'  section. If you get additional features, you can update the spell features and description. You have to format the spell content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. Your generated content must be enclosed between <spell> and </spell>. For example: If the user provides like that: 'Level is 3', your response should be like that: '<spell>{markdown_sample}</spell>'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests, ensuring <spell> tag are included in the generated response."
 
 content_sample_message = [
     {
