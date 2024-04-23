@@ -70,7 +70,7 @@ content_prompt = f"""You are a D&D game magic item generator. Those are 7 tips f
 6. Make Items That Get More Powerful As Characters Level Up.
 7. Add Risk And Reward By Creating Cursed Items
 You should reference those tips for generating new magic items.
-If you get additional features, you can update the generated magic item. You have to format the magic item content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. Your generated content must be enclosed between <magicitem> and </magicitem>. For example: If the user provides like that: 'The item is a silver crescent pendant with sapphire gems and a starburst engraving, looking mystical and celestial', your response should be like that: '<magicitem>{markdown_sample}</magicitem>'. And if the user wants multiple items, you should generate multiple items. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests, ensuring <magicitem> tag are included in the generated response."""
+If you get additional features, you can update the generated magic item. You have to format the magic item content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. For example: If the user provides like that: 'The item is a silver crescent pendant with sapphire gems and a starburst engraving, looking mystical and celestial', your response should be like that: '{markdown_sample}'. And if the user wants multiple items, you should generate multiple items. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests."""
 
 content_sample_message = [
     {
@@ -79,7 +79,7 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to generate magic items and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'The item is a silver crescent pendant with sapphire gems and a starburst engraving, looking mystical and celestial', I need you to say like that: <magicitem>{markdown_sample}</magicitem>"
+        "content": f"Hello! I need you to generate magic items and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'The item is a silver crescent pendant with sapphire gems and a starburst engraving, looking mystical and celestial', I need you to say like that: '{markdown_sample}'"
     },
     {
         "role": "assistant",
@@ -103,18 +103,22 @@ def generate_magic_item(message_list, last_content):
 
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
+        
+        magic_item_item = { "content": assistant_reply, "prompt": message_list }
+        insert_res = magicitem_model.create(magic_item_item)
+        return assistant_reply
 
-        pattern = r'<magicitem>(.*?)</magicitem>'
-        results = re.findall(pattern, assistant_reply, re.DOTALL)
-        if results:
-            contents = ""
-            for item in results:
-                contents += item + " ### "
-            magic_item_item = { "content": contents, "prompt": message_list }
-            insert_res = magicitem_model.create(magic_item_item)
-            return contents
-        else:
-            return ""
+        # pattern = r'<magicitem>(.*?)</magicitem>'
+        # results = re.findall(pattern, assistant_reply, re.DOTALL)
+        # if results:
+        #     contents = ""
+        #     for item in results:
+        #         contents += item + " ### "
+        #     magic_item_item = { "content": contents, "prompt": message_list }
+        #     insert_res = magicitem_model.create(magic_item_item)
+        #     return contents
+        # else:
+        #     return ""
     else:
         return "Error"
 

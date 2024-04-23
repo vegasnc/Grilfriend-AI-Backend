@@ -137,7 +137,7 @@ The forest guardian can take 3 legendary actions, choosing from the options belo
 ***Healing Surge (Costs 3 Actions).*** The forest guardian regains 30 hit points.
 """
 
-content_prompt = "You are a NPC content generator of D&D. Describe NPC's appearance, personality traits, backstory, motivations, notable abilities or skills, interactions with player characters, and any relevant quest or plot hooks related to NPC's character. Include a stat block detailing NPC's combat capabilities, armor, weapons, and special abilities. You can create descriptions and stat blocks. When you create a description, you have to include the stat and ability block. Also you should include the 'Action' section. But 'Legendary Actions' section is optional. But sometimes, you should add the 'Legendary Actions'. For the ability part, you can use short words like 'Str', 'Dex' for 'Strength', 'Dexterity' and so on. If you get additional features, you can update the NPC content. If the user wants a new NPC, all items, starting with the NPC name, must be updated to a completely different words. If the inputed prompt is same as before, you have to generate completely different words from name to content. That is not updating NPC case, don't use the repeated word. You need to create NPC names that are attractive, scary, and human. Don't make general NPC name style, like 'Forest Stalker', 'Sylvan Stalker' and so on. You have to format the NPC content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. And if the user wants multiple NPCs, you should generate multiple NPCs. Your generated content must be enclosed between <npcs> and </npcs>. For example: If the user provides like that: 'NPC live in forest', your response should be like that: '<npcs>{markdown_sample}</npcs>'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests, ensuring <npcs> tag are included in the generated response."
+content_prompt = f"You are a NPC content generator of D&D. Describe NPC's appearance, personality traits, backstory, motivations, notable abilities or skills, interactions with player characters, and any relevant quest or plot hooks related to NPC's character. Include a stat block detailing NPC's combat capabilities, armor, weapons, and special abilities. You can create descriptions and stat blocks. When you create a description, you have to include the stat and ability block. Also you should include the 'Action' section. But 'Legendary Actions' section is optional. But sometimes, you should add the 'Legendary Actions'. For the ability part, you can use short words like 'Str', 'Dex' for 'Strength', 'Dexterity' and so on. If you get additional features, you can update the NPC content. If the user wants a new NPC, all items, starting with the NPC name, must be updated to a completely different words. If the inputed prompt is same as before, you have to generate completely different words from name to content. That is not updating NPC case, don't use the repeated word. You need to create NPC names that are attractive, scary, and human. Don't make general NPC name style, like 'Forest Stalker', 'Sylvan Stalker' and so on. You must format the NPC content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. And if the user wants multiple NPCs, you should generate multiple NPCs. For example: If the user provides like that: 'NPC live in forest', your response should be like that: '{markdown_sample}'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests"
 
 content_sample_message = [
     {
@@ -146,7 +146,7 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to NPC content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'NPC live in forest', I need you to say like that: <npcs>{markdown_sample}</npcs>"
+        "content": f"Hello! I need you to NPC content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'NPC live in forest', I need you to say like that: '{markdown_sample}'"
     },
     {
         "role": "assistant",
@@ -171,17 +171,12 @@ def generate_content(message_list, last_content):
     if response and response.choices:
         assistant_reply = response.choices[0].message["content"]
 
-        pattern = r'<npcs>(.*?)</npcs>'
-        results = re.findall(pattern, assistant_reply, re.DOTALL)
-        if results:
-            contents = ""
-            for item in results:
-                contents += item + " ### "
-            npc_item = { "content": contents, "prompt": message_list }
-            insert_res = npc_model.create(npc_item)
-            return contents
-        else:
-            return ""
+        # pattern = r'<npcs>(.*?)</npcs>'
+        # results = re.findall(pattern, assistant_reply, re.DOTALL)
+        print(f"---- {assistant_reply}")
+        npc_item = { "content": assistant_reply, "prompt": message_list }
+        insert_res = npc_model.create(npc_item)
+        return assistant_reply
     else:
         return "Error"
 

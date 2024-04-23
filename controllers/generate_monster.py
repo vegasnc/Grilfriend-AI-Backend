@@ -183,23 +183,32 @@ The abyssal wing can take 3 legendary actions, choosing from the options below. 
 
 dalle3_prompt = """Create an eerie depiction of a Abyssal Wing emerging from the deplths of a dense, ancient forest, its form blending seamlessly with the shadows and twisted foliage around it. Capture the sense of malevelence and stealth as it perpares to unleash its claws and shadowy powers upon unsuspecting adventurers."""
 
-content_prompt = "You are a D&D monster content generator specialized in creating descriptions and stat blocks. Your task is to generate compelling monster descriptions with accompanying stat blocks and challenge ratings. Each description should include the stat and ability block and challenge rating. Additionally, there should be an 'Action' section, but a 'Legendary Actions' section is only created if the user requests it. For abilities, use abbreviated terms such as 'Str' for 'Strength' and 'Dex' for 'Dexterity'. When generating the monster content, ensure it is formatted in Homebrewery markdown. Even if the provided monster information is limited, you should interpret the user's intention and create the content accordingly. If the user requests a new monster, update all elements from the monster name onwards to completely different words, ensuring uniqueness and attractiveness. Do not use repeated words within one monster's content. And if the user wants multiple monsters, you should generate multiple monsters. In this case, you should generate the DALLE3 prompt for each generated monsters. Your generated monster content must be enclosed between <monster> and </monster>, and the corresponding DALLE3 prompt should be enclosed between <dalle> and </dalle>. Here's an example: If the user provides like that: 'Monster live in forest', your response should be like this: '<monster> {markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Continue, If the user provides like that : 'red eye and too small.', your response should be like that: '<monster> {updated_markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests, ensuring both <monster> and <dalle> tags are included in the generated response."
+markdown_format = """
+Monster Name: You've used "##" to denote the monster name. This is not a standard markdown syntax, but you can create a custom syntax for your purpose. You might refer to this section as the "Monster Name Header."
+Armor Class, Hit Points, Speed: These sections can be specified by using the "---" divider and then listing the relevant information.
+Ability Scores and Skills: You can use a table to specify the ability scores and skills, as you've done.
+Damage Resistances, Immunities, Senses, Languages, Challenge Rating: These sections can be specified using bullet points and dashes, similar to how you've formatted them.
+Traits/Abilities: Each trait or ability can be specified with a bold heading followed by a description.
+Actions and Legendary Actions: Similarly, actions and legendary actions can be specified with bold headings followed by their descriptions.
+"""
+
+content_prompt = f"You are a D&D monster content generator specialized in creating descriptions and stat blocks. Your task is to generate compelling monster descriptions with accompanying stat blocks and challenge ratings. Each description should include the stat and ability block and challenge rating. Additionally, there should be an 'Action' section, but a 'Legendary Actions' section is only created if the user requests it. For abilities, use abbreviated terms such as 'Str' for 'Strength' and 'Dex' for 'Dexterity'. When generating the monster content, ensure it is formatted in Homebrewery markdown. Even if the provided monster information is limited, you should interpret the user's intention and create the content accordingly. If the user requests a new monster, update all elements from the monster name onwards to completely different words, ensuring uniqueness and attractiveness. Do not use repeated words within one monster's content. And if the user wants multiple monsters, you should generate multiple monsters. Markdown content should not be created separately in the answer. Here's an example: If the user provides like that: 'Monster live in forest', your response should be like this: ' {markdown_sample} '. Continue, If the user provides like that : 'red eye and too small.', your response should be like that: ' {updated_markdown_sample} '. Like this example, you must follow the this format. {markdown_format} You should re-generate only related parts from the last content and continue this format for subsequent requests."
 
 content_sample_message = [
     {
         "role": "system",
         "content": content_prompt
-    },
-    {
-        "role": "user",
-        "content": """
-            Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: '<monster> {markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Continue, If I give you like that : 'red eye and too small.', I need you to say like that: '<monster> {updated_markdown_sample} </monster> \n <dalle> {dalle3_prompt} </dalle>'. Like this example, you should re-generate only related parts from last content.
-        """
-    },
-    {
-        "role": "assistant",
-        "content": "Sure thing!"
     }
+    # {
+    #     "role": "user",
+    #     "content": """
+    #         Here's an example: If I give you like that: 'Monster live in forest', I need you to say like that: ' {markdown_sample} '. Continue, If I give you like that : 'red eye and too small.', I need you to say like that: ' {updated_markdown_sample} '. Like this example, you should re-generate only related parts from last content.
+    #     """
+    # },
+    # {
+    #     "role": "assistant",
+    #     "content": "Sure thing!"
+    # }
 ]
 
 start_prompt = "You are a monster content generator. You should create a start prompt for generating monster content of Dungeons & Dragons. Start prompt should be under 10~20 words. Don't specify the monster's features like monster name and so on. Give me a start prompt for generating monster content"
@@ -221,16 +230,21 @@ def generate_content(message_list, last_content):
 
         print(f"----- {  assistant_reply }")
 
-        monster_pattern = r'<monster>(.*?)</monster>'
-        dalle_pattern = r'<dalle>(.*?)</dalle>'
-        results = re.findall(monster_pattern, assistant_reply, re.DOTALL)
-        if results:
-            contents = ""
-            for item in results:
-                contents += item + " ### "
-            monster_item = { "content": contents, "prompt": message_list, "dalle_prompt": "" }
-            insert_res = monster_model.create(monster_item)
-            return contents, ""
+        monster_item = { "content": assistant_reply, "prompt": message_list, "dalle_prompt": "" }
+        insert_res = monster_model.create(monster_item)
+        return assistant_reply
+
+        # monster_pattern = r'<monster>(.*?)</monster>'
+        # dalle_pattern = r'<dalle>(.*?)</dalle>'
+        # results = re.findall(monster_pattern, assistant_reply, re.DOTALL)
+        # if results:
+        #     contents = ""
+        #     for item in results:
+        #         contents += item + " ### "
+        #     monster_item = { "content": contents, "prompt": message_list, "dalle_prompt": "" }
+        #     insert_res = monster_model.create(monster_item)
+        #     return contents, ""
+        
             # # Get dalle3 prompt for generated monster content
             # prompt = ""
             # dalle_result = re.search(dalle_pattern, assistant_reply, re.DOTALL)
@@ -240,10 +254,10 @@ def generate_content(message_list, last_content):
             # monster_item = { "content": result.group(1), "prompt": message_list, "dalle_prompt": prompt }
             # insert_res = monster_model.create(monster_item)
             # return result.group(1), prompt
-        else:
-            return "", ""
+        # else:
+        #     return "", ""
     else:
-        return "Error", ""
+        return "Error"
 
 # Generate question for getting information to generate monster content
 def generate_question(message_list):

@@ -70,7 +70,7 @@ One fateful day, I stumbled upon an old map tucked away in the corner of a dusty
 - Additional Language: Ancient Script of Lost Civilizations
 """
 
-content_prompt = f"You are a character backstory generator. Backstory are 1 to 10 paragraphs, you should try to generate 1-3. Backstory have 1 to 2 benefits. Benefits can be Proficiencies, Addition Languages Or Equipment. If you get additional features, you can update the generated backstory. You have to format the backstory content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. Your generated content must be enclosed between <background> and </background>. For example: If the user provides like that: 'Explore new lands, discover hidden treasures, and become a legendary adventure', your response should be like that: '<background>{markdown_sample}</background>'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests, ensuring <background> tag are included in the generated response."
+content_prompt = f"You are a character backstory generator. Backstory are 1 to 10 paragraphs, you should try to generate 1-3. Backstory have 1 to 2 benefits. Benefits can be Proficiencies, Addition Languages Or Equipment. If you get additional features, you can update the generated backstory. You have to format the backstory content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. For example: If the user provides like that: 'Explore new lands, discover hidden treasures, and become a legendary adventure', your response should be like that: '{markdown_sample}'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests."
 
 content_sample_message = [
     {
@@ -79,7 +79,7 @@ content_sample_message = [
     },
     {
         "role": "user",
-        "content": f"Hello! I need you to generate character's backstory content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'Explore new lands, discover hidden treasures, and become a legendary adventure', I need you to say like that: <background>{markdown_sample}</background>"
+        "content": f"Hello! I need you to generate character's backstory content and return it to me as homebrewery markdown content. Here's an example: If I give you like that: 'Explore new lands, discover hidden treasures, and become a legendary adventure', I need you to say like that: '{markdown_sample}'"
     },
     {
         "role": "assistant",
@@ -106,14 +106,18 @@ def generate_background(message_list, last_content):
 
         print(f"{assistant_reply}")
 
-        pattern = r'<background>(.*?)</background>'
-        result = re.search(pattern, assistant_reply, re.DOTALL)
-        if result:
-            background_item = { "content": result.group(1), "prompt": message_list }
-            insert_res = background_model.create(background_item)
-            return result.group(1)
-        else:
-            return ""
+        background_item = { "content": assistant_reply, "prompt": message_list }
+        insert_res = background_model.create(background_item)
+        return assistant_reply
+
+        # pattern = r'<background>(.*?)</background>'
+        # result = re.search(pattern, assistant_reply, re.DOTALL)
+        # if result:
+        #     background_item = { "content": result.group(1), "prompt": message_list }
+        #     insert_res = background_model.create(background_item)
+        #     return result.group(1)
+        # else:
+        #     return ""
     else:
         return "Error"
 
