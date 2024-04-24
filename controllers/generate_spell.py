@@ -44,32 +44,31 @@ quiz_sample_message = [
 ]
 
 markdown_sample = """
-**Spell Name:** Arcane Distortion
+## Ball of Annoyance
+*2nd-level transmutation*
 
-**Level:** 3rd level
+---
 
-**Main Effect/Purpose:** This spell distorts the fabric of arcane energy, disrupting magical effects in the area.
+###
 
 **Casting Time:** 1 action
 
-**Target/Affected Area:** 20-foot radius sphere centered on a point within range
+**Range:**        Self
 
-**Components:** Verbal, Somatic
+**Components:**   M (a crushed button worth at least 1cp, discarded gum wrapper)
 
-**Duration:** Instantaneous
+**Duration:**     Until dispelled
 
-**School:** Abjuration
+---
 
-**Description:** You unleash a surge of chaotic arcane energy at a point you can see within range. Each creature within a 20-foot radius sphere centered on that point must make an Intelligence saving throw. On a failed save, a creature's concentration on a spell is broken, and any ongoing magical effects within the area are temporarily suppressed for 1d4 rounds.
+###
 
-**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the radius of the area increases by 5 feet for each slot level above 3rd.
-
-**Additional Details/Flavor:** Arcane energy crackles and warps in the affected area, causing disturbances in spells and magical effects. The air feels charged with energy, and spellcasters may experience a momentary disorientation as their magical connections falter.
-
-This spell is particularly useful for disrupting enemy spellcasters' concentration and temporarily neutralizing ongoing magical effects in a given area, making it valuable in both offensive and defensive situations. However, its effectiveness may vary depending on the targets' intelligence and their reliance on magic.
+A flame, equivalent in brightness to a torch, springs from an object that you touch.
+The effect look like a regular flame, but it creates no heat and doesn't use oxygen.
+A *continual flame* can be covered or hidden but not smothered or quenched.
 """
 
-content_prompt = f"You are a D&D game spell generator. You can create spell name, level, casting time, range/area, components, duration, school, attack/save, damage/effect and description. You should include the 'Description'  section. If you get additional features, you can update the spell features and description. You have to format the spell content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. And if the user wants multiple spells for spell book, you should generate multiple spell. For example: If the user provides like that: 'Level is 3', your response should be like that: '{markdown_sample}'. Like this example, you should re-generate only related parts from the last content and continue this format for subsequent requests."
+content_prompt = f"You are a D&D game spell generator. You can create spell name, level, casting time, range/area, components, duration, school, attack/save, damage/effect and description. You should include the 'Description'  section. If you get additional features, you can update the spell features and description. You have to format the spell content in a homebrewery markdown. Even if the provided information is limited, you should interpret the user's intention and create the content accordingly. And if the user wants multiple spells for spell book, you should generate multiple spell. For example: If the user provides like that: 'Level is 3', your response should be like that: '{markdown_sample}'. Like this example, you must follow the this format. '{markdown_sample}' You should re-generate only related parts from the last content and continue this format for subsequent requests."
 
 content_sample_message = [
     {
